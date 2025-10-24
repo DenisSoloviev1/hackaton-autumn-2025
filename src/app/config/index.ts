@@ -19,6 +19,7 @@ class AppRouting extends PagePath {
 
   main = new PagePath(this.method(""));
   auth = new PagePath(this.method("auth"));
+  meeting = new PagePath(this.method("meeting"));
   notFound = new PagePath(this.method("*"));
 }
 

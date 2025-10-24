@@ -1,41 +1,24 @@
 import { FC } from 'react';
-import { Button } from '@heroui/react';
-import { useAuthContext } from '@/app/providers/auth';
-
-
-import { LogoutIcon } from '@/shared/ui/icons';
-
-import cls from './index.module.scss';
+import { Header } from '@/widgets/header';
+import {
+  HeroSection,
+  FeaturesSection,
+  StatsSection,
+  CtaSection,
+  FooterSection
+} from '@/widgets/landing';
 
 const MainPage: FC = () => {
-  const { user, logout } = useAuthContext();
-
   return (
     <>
-      <header className={cls.header}>
-        <div className={cls.wrapper}>
-          <div className='flex items-center justify-between'>
-            <h1>HubServer</h1>
-
-            <div className='flex max-w-[250px] items-center gap-4'>
-              <span>Пользователь: {user?.username}</span>
-              <Button
-                isIconOnly
-                variant='light'
-                className={cls.logout}
-                startContent={<LogoutIcon size={16} />}
-                onPress={() => logout()}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className={cls.main}>
-        <div className={cls.wrapper}>
-          {user && <p>Привет, {user.username}!</p>}
-
-          
+      <Header />
+      <main>
+        <div className="min-h-screen bg-gradient-to-br from-secondary-50 to-primary-50 dark:from-secondary-950 dark:to-primary-950">
+          <HeroSection />
+          <FeaturesSection />
+          <StatsSection />
+          <CtaSection />
+          <FooterSection />
         </div>
       </main>
     </>

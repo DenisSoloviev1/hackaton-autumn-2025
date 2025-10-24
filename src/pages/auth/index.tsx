@@ -1,28 +1,49 @@
-import { Button, Input, Tabs, Tab, Card, CardBody, CardHeader } from '@heroui/react';
-import { FC, useState } from 'react';
-
-import { Label } from '@/shared/_components/ui/label';
 import {
-  Card as UICard,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from '@/shared/_components/ui/card';
-
-import cls from './index.module.scss';
+  Button,
+  Input,
+  Tabs,
+  Tab,
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  Divider,
+} from '@heroui/react';
+import { FC, useState } from 'react';
+import {
+  VideoCameraIcon,
+  UserIcon,
+  BoltIcon,
+  LinkIcon,
+  PlayIcon,
+  PlusIcon,
+  InformationCircleIcon,
+  EnvelopeIcon,
+  LockClosedIcon,
+  ChatBubbleLeftRightIcon,
+} from '@heroicons/react/24/outline';
+import { appRouting } from '@/app/config';
 
 const AuthPage: FC = () => {
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
   const [roomLink, setRoomLink] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
 
   const onJoinRoom = (
     roomId: string,
     userName: string,
     isModerator: boolean
   ) => {
-    // Ваша логика входа в комнату
-    console.log('Joining room:', roomId, userName, isModerator);
+    localStorage.setItem('user', JSON.stringify({
+      name: userName,
+      isModerator,
+      roomId
+    }));
+
+    window.location.href = appRouting.meeting.path;
   };
 
   const handleCreateRoom = () => {
@@ -41,7 +62,6 @@ const AuthPage: FC = () => {
       return;
     }
 
-    // Извлечение ID комнаты из ссылки
     const roomId = roomLink.includes('room=')
       ? new URLSearchParams(roomLink.split('?')[1]).get('room') || roomLink
       : roomLink;
@@ -49,147 +69,209 @@ const AuthPage: FC = () => {
     onJoinRoom(roomId, userName, false);
   };
 
+  const handleGuestLogin = () => {
+    const guestName = `Гость-${Math.random().toString(36).substr(2, 6)}`;
+    setUserName(guestName);
+    // Автоматический вход в демо-комнату
+    onJoinRoom('demo-room', guestName, false);
+  };
+
+  const handleAuth = () => {
+    if (!email.trim() || !password.trim()) {
+      alert('Пожалуйста, заполните все поля');
+      return;
+    }
+
+    // Здесь будет логика авторизации/регистрации
+    console.log(`${isLogin ? 'Login' : 'Register'} with:`, email, password);
+  };
+
   return (
-    <main >
-      <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4'>
-        <div className='w-full max-w-4xl'>
-          {/* Заголовок */}
-          <div className='mb-8 text-center'>
-            <div className='mb-4 flex items-center justify-center gap-3'>
-              <div className='rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-3'>
-                {/* <Video className='h-8 w-8 text-white' /> */}
-              </div>
-              <h1 className='text-4xl'>ConferenceHub</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="flex flex-col items-center justify-center p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <VideoCameraIcon className="w-6 h-6 text-white" />
             </div>
-            <p className='text-slate-600'>
-              Безопасные видеоконференции с end-to-end шифрованием
-            </p>
+            <h1 className="text-2xl font-bold text-gray-800">VideoMeet</h1>
           </div>
+          <p className="text-gray-600 text-center">Присоединяйтесь к видео встрече</p>
+        </CardHeader>
 
-          {/* Основная карточка */}
-          <Card className='border-0 shadow-2xl'>
-            <CardHeader className='pb-0'>
-              <CardTitle>Начало работы</CardTitle>
-              <CardDescription>
-                Создайте новую комнату или присоединитесь к существующей
-              </CardDescription>
-            </CardHeader>
-            <CardBody>
-              <Tabs 
-                aria-label="Options" 
-                className="w-full"
-                color="primary"
-                variant="underlined"
-              >
-                <Tab key="create" title={
-                  <div className="flex items-center gap-2">
-                    {/* <Plus className='h-4 w-4' /> */}
-                    Создать комнату
-                  </div>
-                }>
-                  <div className='space-y-4 pt-4'>
-                    <div className='space-y-2'>
-                      <Label>Ваше имя</Label>
-                      <Input
-                        id='create-name'
-                        placeholder='Введите ваше имя'
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                      />
-                    </div>
-                    <div className='space-y-2'>
-                      <Label>Название комнаты</Label>
-                      <Input
-                        id='room-name'
-                        placeholder='Например: Встреча команды'
-                        value={roomName}
-                        onChange={(e) => setRoomName(e.target.value)}
-                      />
-                    </div>
-                    <Button
-                      onPress={handleCreateRoom}
-                      className='w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                      size='lg'
-                    >
-                      {/* <Plus className='mr-2 h-4 w-4' /> */}
-                      Создать и войти
-                    </Button>
-                  </div>
-                </Tab>
-                
-                <Tab key="join" title={
-                  <div className="flex items-center gap-2">
-                    {/* <LinkIcon className='h-4 w-4' /> */}
-                    Войти по ссылке
-                  </div>
-                }>
-                  <div className='space-y-4 pt-4'>
-                    <div className='space-y-2'>
-                      <Label>Ваше имя</Label>
-                      <Input
-                        id='join-name'
-                        placeholder='Введите ваше имя'
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                      />
-                    </div>
-                    <div className='space-y-2'>
-                      <Label>Ссылка на комнату или ID</Label>
-                      <Input
-                        id='room-link'
-                        placeholder='Вставьте ссылку или ID комнаты'
-                        value={roomLink}
-                        onChange={(e) => setRoomLink(e.target.value)}
-                      />
-                    </div>
-                    <Button
-                      onPress={handleJoinByLink}
-                      className='w-full'
-                      size='lg'
-                      variant='bordered'
-                    >
-                      {/* <LinkIcon className='mr-2 h-4 w-4' /> */}
-                      Присоединиться
-                    </Button>
-                  </div>
-                </Tab>
-              </Tabs>
-            </CardBody>
-          </Card>
+        <CardBody className="p-6">
+          <Tabs aria-label="Auth options" fullWidth>
+            <Tab key="guest" title={
+              <div className="flex items-center gap-2">
+                <UserIcon className="w-4 h-4" />
+                Гость
+              </div>
+            }>
+              <div className="flex flex-col gap-4 mt-4">
+                <Input
+                  label="Ваше имя"
+                  placeholder="Введите ваше имя"
+                  value={userName}
+                  onValueChange={setUserName}
+                  startContent={
+                    <UserIcon className="w-4 h-4 text-gray-400" />
+                  }
+                />
 
-          {/* Функции */}
-          <div className='mt-8 grid grid-cols-1 gap-4 md:grid-cols-3'>
-            <div className='rounded-lg bg-white/50 p-4 text-center backdrop-blur-sm'>
-              <div className='mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100'>
-                {/* <Video className='h-6 w-6 text-blue-600' /> */}
+                <div className="relative flex items-center justify-center">
+                  <Divider className="flex-1" />
+                  <Chip variant="flat" className="absolute mx-2">или</Chip>
+                </div>
+
+                <Button
+                  color="primary"
+                  variant="flat"
+                  onPress={handleGuestLogin}
+                  startContent={
+                    <BoltIcon className="w-4 h-4" />
+                  }
+                >
+                  Быстрый вход как гость
+                </Button>
+
+                <Divider />
+
+                <div className="space-y-3">
+                  <Input
+                    label="Ссылка на встречу"
+                    placeholder="Введите ссылку на встречу"
+                    value={roomLink}
+                    onValueChange={setRoomLink}
+                    startContent={
+                      <LinkIcon className="w-4 h-4 text-gray-400" />
+                    }
+                  />
+
+                  <Button
+                    color="primary"
+                    onPress={handleJoinByLink}
+                    fullWidth
+                    startContent={
+                      <PlayIcon className="w-4 h-4" />
+                    }
+                  >
+                    Присоединиться к встрече
+                  </Button>
+                </div>
               </div>
-              <h3 className='mb-1'>HD видео/аудио</h3>
-              <p className='text-sm text-slate-600'>
-                Качественная связь в реальном времени
-              </p>
-            </div>
-            <div className='rounded-lg bg-white/50 p-4 text-center backdrop-blur-sm'>
-              <div className='mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-purple-100'>
-                {/* <Shield className='h-6 w-6 text-purple-600' /> */}
+            </Tab>
+
+            <Tab key="create" title={
+              <div className="flex items-center gap-2">
+                <PlusIcon className="w-4 h-4" />
+                Создать встречу
               </div>
-              <h3 className='mb-1'>Безопасность</h3>
-              <p className='text-sm text-slate-600'>
-                End-to-end шифрование данных
-              </p>
-            </div>
-            <div className='rounded-lg bg-white/50 p-4 text-center backdrop-blur-sm'>
-              <div className='mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-pink-100'>
-                {/* <Users className='h-6 w-6 text-pink-600' /> */}
+            }>
+              <div className="flex flex-col gap-4 mt-4">
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <InformationCircleIcon className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">Требуется авторизация</span>
+                  </div>
+                  <p className="text-xs text-blue-600">
+                    Для создания встречи необходимо войти в систему или зарегистрироваться
+                  </p>
+                </div>
+
+                <Tabs
+                  aria-label="Auth type"
+                  size="sm"
+                  selectedKey={isLogin ? "login" : "register"}
+                  onSelectionChange={(key) => setIsLogin(key === "login")}
+                >
+                  <Tab key="login" title="Вход">
+                    <div className="space-y-4 mt-4">
+                      <Input
+                        label="Email"
+                        type="email"
+                        placeholder="Введите ваш email"
+                        value={email}
+                        onValueChange={setEmail}
+                        startContent={
+                          <EnvelopeIcon className="w-4 h-4 text-gray-400" />
+                        }
+                      />
+                      <Input
+                        label="Пароль"
+                        type="password"
+                        placeholder="Введите пароль"
+                        value={password}
+                        onValueChange={setPassword}
+                        startContent={
+                          <LockClosedIcon className="w-4 h-4 text-gray-400" />
+                        }
+                      />
+                      <Button color="primary" onPress={handleAuth} fullWidth>
+                        Войти
+                      </Button>
+                    </div>
+                  </Tab>
+
+                  <Tab key="register" title="Регистрация">
+                    <div className="space-y-4 mt-4">
+                      <Input
+                        label="Email"
+                        type="email"
+                        placeholder="Введите ваш email"
+                        value={email}
+                        onValueChange={setEmail}
+                        startContent={
+                          <EnvelopeIcon className="w-4 h-4 text-gray-400" />
+                        }
+                      />
+                      <Input
+                        label="Пароль"
+                        type="password"
+                        placeholder="Создайте пароль"
+                        value={password}
+                        onValueChange={setPassword}
+                        startContent={
+                          <LockClosedIcon className="w-4 h-4 text-gray-400" />
+                        }
+                      />
+                      <Button color="primary" onPress={handleAuth} fullWidth>
+                        Зарегистрироваться
+                      </Button>
+                    </div>
+                  </Tab>
+                </Tabs>
+
+                <Divider />
+
+                <div className="space-y-3">
+                  <Input
+                    label="Название комнаты"
+                    placeholder="Введите название встречи"
+                    value={roomName}
+                    onValueChange={setRoomName}
+                    startContent={
+                      <ChatBubbleLeftRightIcon className="w-4 h-4 text-gray-400" />
+                    }
+                  />
+
+                  <Button
+                    color="success"
+                    variant="shadow"
+                    onPress={handleCreateRoom}
+                    fullWidth
+                    startContent={
+                      <PlusIcon className="w-4 h-4" />
+                    }
+                  >
+                    Создать встречу
+                  </Button>
+                </div>
               </div>
-              <h3 className='mb-1'>Совместная работа</h3>
-              <p className='text-sm text-slate-600'>
-                Чат, демонстрация экрана, запись
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+            </Tab>
+          </Tabs>
+        </CardBody>
+      </Card>
+    </div>
   );
 };
 

@@ -3,8 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import { Providers } from "./providers";
 import { Spinner } from "@heroui/react";
-
-import "./styles/index.scss";
+import './styles/globals.css';
 
 const App: FC = () => {
   return (

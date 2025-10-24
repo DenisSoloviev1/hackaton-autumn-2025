@@ -6,6 +6,7 @@ import ProtectedRoute from "./protected-route";
 
 const App = lazy(() => import("../index"));
 const Main = lazy(() => import("@/pages/main"));
+const Meeting = lazy(() => import("@/pages/meeting/meeting.page"));
 const Auth = lazy(() => import("@/pages/auth"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
@@ -27,6 +28,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Main />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: appRouting.meeting.path,
+        element: (
+          <ProtectedRoute>
+            <Meeting />
           </ProtectedRoute>
         ),
       },
