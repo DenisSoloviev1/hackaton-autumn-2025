@@ -1,0 +1,40 @@
+# Игнорируемые файлы и папки
+**/.next
+**/node_modules
+**/dist
+**/out
+**/.cache
+**/.yarn
+**/coverage
+**/build
+**/public
+
+# Конфиги и системные файлы
+*.md
+*.json
+*.yaml
+*.yml
+*.log
+*.lock
+
+# Игнорируем файлы, которые могут сломаться при форматировании
+**/*.svg
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.ico
+**/*.webp
+**/*.woff
+**/*.woff2
+**/*.eot
+**/*.ttf
+**/*.pdf
+
+# Специфичные файлы проекта
+.next.config.js
+jest.config.js
+orval.config.ts
+tsconfig.json
+.eslintrc.json
+.prettierrc
